@@ -11,8 +11,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:placeholder_api/main.dart';
 
 void main() {
-
-    IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('Make Request Button', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
@@ -21,13 +20,14 @@ void main() {
     expect(find.text('Make request'), findsOneWidget);
   });
 
-    testWidgets('Make public api request', (WidgetTester tester) async {
+  testWidgets('Make public api request', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
     // Tap the '+' icon and trigger a frame.
     await tester.tap(find.byKey(const Key('apiUrlTextBox')));
-    await tester.enterText(find.byKey(const Key('apiUrlTextBox')), 'https://jsonplaceholder.typicode.com/todos/1');
+    await tester.enterText(find.byKey(const Key('apiUrlTextBox')),
+        'https://jsonplaceholder.typicode.com/todos/1');
     await tester.tap(find.byKey(const Key('submitButton')));
     await tester.pump(const Duration(milliseconds: 1000));
 
@@ -35,8 +35,7 @@ void main() {
     expect(find.text("200"), findsOneWidget);
   });
 
-
-    testWidgets('Make empty api request', (WidgetTester tester) async {
+  testWidgets('Make empty api request', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
@@ -49,6 +48,4 @@ void main() {
     // Verify that our counter has incremented.
     expect(find.text("400"), findsOneWidget);
   });
-
-  
 }

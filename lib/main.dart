@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
+
   final String title;
 
   @override
@@ -39,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String responseStatus = 'No status yet';
   bool isLoading = false;
   String apiUrl = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,7 +116,7 @@ Future<http.Response> makeRequest(String apiUrl) async {
     return http.get(Uri.parse(apiUrl)).timeout(const Duration(seconds: 10),
         onTimeout: () {
       debugPrint("Erro: Request time out");
-      return http.Response('Error: Request failed',0);
+      return http.Response('Error: Request failed', 0);
     });
   } catch (e) {
     debugPrint("MakeRequest Error: $e");
