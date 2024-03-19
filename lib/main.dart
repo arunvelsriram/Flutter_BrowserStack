@@ -35,9 +35,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String responseString = 'No body yet';
-  String responseHeader = 'No header yet';
-  String responseStatus = 'No status yet';
+  String? responseString = 'No body yet';
+  String? responseHeader = 'No header yet';
+  String? responseStatus = 'No status yet';
+  String? error = 'No status yet';
   bool isLoading = false;
   String apiUrl = "";
 
@@ -73,17 +74,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     FocusScope.of(context).unfocus();
                     try {
                       debugPrint("Starting request");
-                      http.Response response = await makeRequest(apiUrl);
-                      responseString = response.body;
-                      responseHeader = response.headers.toString();
-                      responseStatus = response.statusCode.toString();
-                      debugPrint("Response body:${response.body}");
+                      Map<String, String> response = await makeRequest(apiUrl);
+                      responseString = response["body"];
+                      responseHeader = response["headers"];
+                      responseStatus = response["statusCode"];
+                      error = response["error"];
+                      debugPrint("Response body:$responseString");
                       isLoading = false;
                     } catch (e) {
-                      debugPrint("Erro: $e");
-                      responseStatus = '0';
-                      responseHeader = 'Error';
-                      responseString = e.toString();
+                      debugPrint("Error when making request: $e");
+                      responseStatus = '';
+                      responseHeader = '';
+                      responseString = '';
+                      error = "Error when making request: $e";
                       isLoading = false;
                     }
                     setState(() {});
@@ -94,12 +97,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const Text("Error:"),
+                        Text(error.toString()),
                         const Text("Status:"),
-                        Text(responseStatus),
+                        Text(responseStatus.toString()),
                         const Text("Header:"),
-                        Text(responseHeader),
+                        Text(responseHeader.toString()),
                         const Text("Body:"),
-                        Text(responseString)
+                        Text(responseString.toString())
                       ],
                     )
             ],
@@ -110,16 +115,23 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-Future<http.Response> makeRequest(String apiUrl) async {
+Future<Map<String, String>> makeRequest(String apiUrl) async {
   try {
     debugPrint("Inside make request");
-    return http.get(Uri.parse(apiUrl)).timeout(const Duration(seconds: 10),
-        onTimeout: () {
-      debugPrint("Erro: Request time out");
-      return http.Response('Error: Request failed', 0);
-    });
+    http.Response response = await http.get(Uri.parse(apiUrl));
+    return {
+      "statusCode": response.statusCode.toString(),
+      "body": response.body.toString(),
+      "headers": response.headers.toString(),
+      "error": ""
+    };
   } catch (e) {
     debugPrint("MakeRequest Error: $e");
-    return http.Response('Error occured', 0);
+    return {
+      "statusCode": "",
+      "body": "",
+      "headers": "",
+      "error": "MakeRequest Error: $e"
+    };
   }
 }
